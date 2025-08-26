@@ -1,30 +1,28 @@
 function mincost(arr) {
-    // Initialize total cost
-    let totalCost = 0;
+  if (arr.length <= 1) return 0; // No cost if only one rope
 
-    // Keep combining ropes until only one rope remains
-    while (arr.length > 1) {
-        // Sort the array in ascending order
-        arr.sort((a, b) => a - b);
+  let cost = 0;
 
-        // Take the two smallest ropes
-        let first = arr.shift();   // smallest
-        let second = arr.shift();  // second smallest
+  // Convert to array and sort
+  arr.sort((a, b) => a - b);
 
-        // Combine them
-        let cost = first + second;
+  while (arr.length > 1) {
+    // Take two smallest ropes
+    let first = arr.shift();
+    let second = arr.shift();
 
-        // Add cost to total
-        totalCost += cost;
+    let newRope = first + second;
+    cost += newRope;
 
-        // Add the combined rope back to the array
-        arr.push(cost);
-    }
+    // Insert back into sorted order
+    arr.push(newRope);
+    arr.sort((a, b) => a - b);
+  }
 
-    return totalCost;
+  return cost;
 }
 
-// Example usage:
-console.log(mincost([4, 3, 2, 6])); // Output: 29
-console.log(mincost([1, 2, 3, 4, 5])); // Output: 33
+// Test cases
+console.log(mincost([4, 3, 2, 6])); // 29
+console.log(mincost([1, 2, 3, 4, 5])); // 33
 
