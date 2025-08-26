@@ -1,46 +1,44 @@
-// Min Cost Ropes using Min-Heap (Priority Queue)
-
-// Priority Queue Implementation
+// Import MinHeap from priority queue
 class MinHeap {
   constructor() {
     this.heap = [];
   }
 
-  // Swap utility
+  getParentIndex(i) { return Math.floor((i - 1) / 2); }
+  getLeftChildIndex(i) { return 2 * i + 1; }
+  getRightChildIndex(i) { return 2 * i + 2; }
+
   swap(i, j) {
     [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
   }
 
-  // Insert value into heap
-  push(val) {
-    this.heap.push(val);
-    this.bubbleUp(this.heap.length - 1);
+  insert(value) {
+    this.heap.push(value);
+    this.heapifyUp();
   }
 
-  // Heapify upwards
-  bubbleUp(index) {
-    let parent = Math.floor((index - 1) / 2);
-    while (index > 0 && this.heap[parent] > this.heap[index]) {
-      this.swap(parent, index);
-      index = parent;
-      parent = Math.floor((index - 1) / 2);
+  heapifyUp() {
+    let index = this.heap.length - 1;
+    while (index > 0 && this.heap[index] < this.heap[this.getParentIndex(index)]) {
+      this.swap(index, this.getParentIndex(index));
+      index = this.getParentIndex(index);
     }
   }
 
-  // Remove min element
-  pop() {
+  extractMin() {
+    if (this.heap.length === 0) return null;
     if (this.heap.length === 1) return this.heap.pop();
+
     const min = this.heap[0];
     this.heap[0] = this.heap.pop();
-    this.bubbleDown(0);
+    this.heapifyDown(0);
     return min;
   }
 
-  // Heapify downwards
-  bubbleDown(index) {
-    let left = index * 2 + 1;
-    let right = index * 2 + 2;
+  heapifyDown(index) {
     let smallest = index;
+    const left = this.getLeftChildIndex(index);
+    const right = this.getRightChildIndex(index);
 
     if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {
       smallest = left;
@@ -48,9 +46,10 @@ class MinHeap {
     if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {
       smallest = right;
     }
+
     if (smallest !== index) {
       this.swap(index, smallest);
-      this.bubbleDown(smallest);
+      this.heapifyDown(smallest);
     }
   }
 
@@ -59,31 +58,33 @@ class MinHeap {
   }
 }
 
-// Main function
+// Function to calculate min cost of ropes
 function mincost(arr) {
   let heap = new MinHeap();
 
-  // Insert all rope lengths into heap
+  // Insert all ropes into heap
   for (let rope of arr) {
-    heap.push(rope);
+    heap.insert(rope);
   }
 
   let totalCost = 0;
 
-  // Keep connecting ropes until one remains
+  // Keep combining ropes until one rope remains
   while (heap.size() > 1) {
-    let first = heap.pop();
-    let second = heap.pop();
+    let first = heap.extractMin();
+    let second = heap.extractMin();
+
     let cost = first + second;
     totalCost += cost;
-    heap.push(cost);
+
+    heap.insert(cost);
   }
 
   return totalCost;
 }
 
-// Examples
-console.log(mincost([4, 3, 2, 6])); // 29
-console.log(mincost([1, 2, 3, 4, 5])); // 33
+// Example usage
+console.log(mincost([4, 3, 2, 6])); // Output: 29
+console.log(mincost([1, 2, 3, 4, 5])); // Output: 33
 
 
